@@ -28,11 +28,6 @@ class HyperTest {
           opcode: 'GenerateRandomPython',
           blockType: Scratch.BlockType.REPORTER,
           text: 'Generate a random number with python, this is a test',
-        },
-        {
-          opcode: 'runPythonCode',
-          blockType: Scratch.BlockType.REPORTER,
-          text: 'run python code(dont use)',
         }
       ],
       menus: {
@@ -70,12 +65,7 @@ class HyperTest {
       await loadPyodide();
     }
   }
-  async GenerateRandomPython() {
-    const pyodideScript = document.createElement('script');
-    pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js';
-    document.head.appendChild(pyodideScript);
-    await new Promise((resolve) => (pyodideScript.onload = resolve));
-    await loadPyodide();
+  GenerateRandomPython() {
     const pythonCode = `
 import random
 test = random.randint(1, 10)
@@ -86,29 +76,6 @@ test
     let result = await pyodide.runPythonAsync(pythonCode);
     return result;
                                }
-
-
-  async runPythonCode() {
-    // Load Pyodide (this part will run the Python code inside the browser)
-    if (typeof pyodide === 'undefined') {
-      const pyodideScript = document.createElement('script');
-      pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js';
-      document.head.appendChild(pyodideScript);
-      await new Promise((resolve) => (pyodideScript.onload = resolve));
-      await loadPyodide();
-    }
-
-    // Python code you want to run
-    const pythonCode = `
-import random
-test = random.randint(1, 10)
-test
-    `;
-    
-    // Run the Python code and get the result
-    let result = await pyodide.runPythonAsync(pythonCode);
-    return result;
-  }
 }
 
 
