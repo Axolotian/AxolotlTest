@@ -70,7 +70,13 @@ class HyperTest {
       await loadPyodide();
     }
   }
-  async GenerateRandomPython() {const pythonCode = `
+  async GenerateRandomPython() {
+    const pyodideScript = document.createElement('script');
+    pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js';
+    document.head.appendChild(pyodideScript);
+    await new Promise((resolve) => (pyodideScript.onload = resolve));
+    await loadPyodide();
+    const pythonCode = `
 import random
 test = random.randint(1, 10)
 test
