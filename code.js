@@ -25,6 +25,11 @@ class HyperTest {
           text: 'Initialise Python',
         },
         {
+          opcode: 'GenerateRandomPython',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'Generate a random number with python, this is a test',
+        },
+        {
           opcode: 'runPythonCode',
           blockType: Scratch.BlockType.REPORTER,
           text: 'run python code(dont use)',
@@ -55,7 +60,7 @@ class HyperTest {
       return args.TEXT.toString().toLowerCase();
     }
   }
-  async runPythonCode() {
+  async PythonInit() {
     // Load Pyodide (this part will run the Python code inside the browser)
     if (typeof pyodide === 'undefined') {
       const pyodideScript = document.createElement('script');
@@ -65,6 +70,17 @@ class HyperTest {
       await loadPyodide();
     }
   }
+  GenerateRandomPython() {const pythonCode = `
+import random
+test = random.randint(1, 10)
+test
+    `;
+    
+    // Run the Python code and get the result
+    let result = await pyodide.runPythonAsync(pythonCode);
+    return result;
+  }
+}
 
   async runPythonCode() {
     // Load Pyodide (this part will run the Python code inside the browser)
@@ -88,5 +104,6 @@ test
     return result;
   }
 }
+
 
 Scratch.extensions.register(new HyperTest());
