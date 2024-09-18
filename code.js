@@ -56,6 +56,11 @@ message
           text: 'Reset Python script to default',
         },
         {
+          opcode: 'deleteCode',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'Delete Python Script',
+        },
+        {
           opcode: 'getCode',
           blockType: Scratch.BlockType.REPORTER,
           text: 'Python script',
@@ -145,6 +150,9 @@ message
 message = ("Hello World!")
 message
     `;
+  }
+  deleteCode() {
+    this.pythonCode = ``;
   }
 
   getCode() {
