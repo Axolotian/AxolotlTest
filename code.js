@@ -4,9 +4,7 @@ class TurboPython {
     this.pyodideLoading = false;
     this.pyodideLoadingStatus = "0/5";
     this.pythonCode = `
-import random
-test = random.randint(1, 10)
-test
+print("Hello World!")
     `; // Predefine the Python code
     this.preloadPyodide(); // Preload Pyodide when the extension is initialized
   }
@@ -24,7 +22,7 @@ test
         {
           opcode: 'GenerateRandomPython',
           blockType: Scratch.BlockType.REPORTER,
-          text: 'Generate a random number with Python, this is a test',
+          text: 'Python Code Result',
         },
         {
           opcode: 'checkPython',
