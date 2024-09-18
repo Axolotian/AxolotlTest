@@ -1,2 +1,2 @@
 # TurboPython
-Run python in turbowarp, I guess
+Run Python scripts in Turbowarp!
