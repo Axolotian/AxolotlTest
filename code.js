@@ -40,14 +40,26 @@ message
           blockType: Scratch.BlockType.REPORTER,
           text: 'Python Loading Status',
         },
-        {opcode: 'runPython',
+        {opcode: 'addCode',
         blockType: Scratch.BlockType.COMMAND,
-        text: 'Run python code [SCRIPT]',
+        text: 'Add codeline to python script[CODE]',
         arguments:{
-            SCRIPT: {
+            CODE: {
               type: Scratch.ArgumentType.STRING
             }
-        }
+        },
+        {opcode: 'resetCode',
+        blockType: Scratch.BlockType.COMMAND,
+        text: 'reset python script to default'
+        },
+        {opcode: 'getCode',
+        blockType: Scratch.BlockType.REPORTER,
+        text: 'python script'
+        },
+        
+        {opcode: 'runPython',
+        blockType: Scratch.BlockType.REPORTER,
+        text: 'Run python code'
         }
       ],
     };
@@ -124,11 +136,23 @@ message
   pythonLoadingStep() {
     return this.pyodideLoadingStatus;
   }
-  runPython(args) {
-    this.pythonCode = (args)
+  runPython() {
     this.RunCodePython()
     
 }
+  addCode(args) {
+    this.pythonCode = (this.pythonCode + `
+    ` + args)
+  }
+  resetCode() {
+    this.pythonCode = `
+message = ("Hello World!")
+message
+    `
+  }
+  getCode() {
+    return this.pythonCode
+  }
     async RunCodePython() {
     // Ensure Pyodide is loaded
     if (!this.pyodideReady) {
