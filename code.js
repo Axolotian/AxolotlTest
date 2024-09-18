@@ -146,5 +146,6 @@ test
       throw new Error("Pyodide is not available");
     }
   }
+}
 
 Scratch.extensions.register(new TurboPython());
