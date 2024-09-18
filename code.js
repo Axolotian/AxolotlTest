@@ -21,9 +21,9 @@ message
           text: 'Initialise Python',
         },
         {
-          opcode: 'GenerateRandomPython',
+          opcode: 'runCode',
           blockType: Scratch.BlockType.REPORTER,
-          text: 'Python Code Result',
+          text: 'Run Python Code',
         },
         {
           opcode: 'checkPython',
@@ -40,27 +40,26 @@ message
           blockType: Scratch.BlockType.REPORTER,
           text: 'Python Loading Status',
         },
-        {opcode: 'addCode',
-        blockType: Scratch.BlockType.COMMAND,
-        text: 'Add codeline to python script[CODE]',
-        arguments:{
+        {
+          opcode: 'addCode',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'Add codeline to python script [CODE]',
+          arguments: {
             CODE: {
-              type: Scratch.ArgumentType.STRING
-            }
+              type: Scratch.ArgumentType.STRING,
+            },
+          },
         },
-        {opcode: 'resetCode',
-        blockType: Scratch.BlockType.COMMAND,
-        text: 'reset python script to default'
+        {
+          opcode: 'resetCode',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'Reset Python script to default',
         },
-        {opcode: 'getCode',
-        blockType: Scratch.BlockType.REPORTER,
-        text: 'python script'
+        {
+          opcode: 'getCode',
+          blockType: Scratch.BlockType.REPORTER,
+          text: 'Python script',
         },
-        
-        {opcode: 'runPython',
-        blockType: Scratch.BlockType.REPORTER,
-        text: 'Run python code'
-        }
       ],
     };
   }
@@ -70,14 +69,12 @@ message
       this.pyodideLoading = true;
       this.pyodideLoadingStatus = "0/5";
       const pyodideScript = document.createElement('script');
-      this.pyodideLoadingStatus = "1/5";
       pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.21.2/full/pyodide.js'; // Updated version
       document.head.appendChild(pyodideScript);
-      this.pyodideLoadingStatus = "2/5";
 
       await new Promise((resolve, reject) => {
         pyodideScript.onload = () => {
-          this.pyodideLoadingStatus = "3/5";
+          this.pyodideLoadingStatus = "1/5";
           resolve();
         };
         pyodideScript.onerror = () => {
@@ -86,13 +83,12 @@ message
         };
       });
 
-      // Wait for Pyodide to fully load
       try {
         window.pyodide = await loadPyodide(); // Ensure Pyodide is loaded
-        this.pyodideLoadingStatus = "4/5";
+        this.pyodideLoadingStatus = "2/5";
         this.pyodideReady = true;
         this.pyodideLoading = false;
-        this.pyodideLoadingStatus = "5/5";
+        this.pyodideLoadingStatus = "3/5";
       } catch (error) {
         this.pyodideLoadingStatus = "Error loading Pyodide";
         console.error("Error loading Pyodide:", error);
@@ -102,13 +98,12 @@ message
 
   async PythonInit() {
     // This function is now almost redundant since Pyodide is preloaded at the start
-    if (this.pyodideReady) {
-      return;
+    if (!this.pyodideReady) {
+      await this.preloadPyodide(); // Ensure Pyodide is ready
     }
-    await this.preloadPyodide(); // Ensure Pyodide is ready
   }
 
-  async GenerateRandomPython() {
+  async runCode() {
     // Ensure Pyodide is loaded
     if (!this.pyodideReady) {
       if (!this.pyodideLoading) {
@@ -116,7 +111,7 @@ message
       }
     }
 
-    // Run the pre-defined Python code and get the result
+    // Run the Python code and get the result
     if (window.pyodide) {
       let result = await window.pyodide.runPythonAsync(this.pythonCode);
       return result;
@@ -136,24 +131,27 @@ message
   pythonLoadingStep() {
     return this.pyodideLoadingStatus;
   }
-  runPython() {
-    this.RunCodePython()
-    
-}
-  addCode(args) {
-    this.pythonCode = (this.pythonCode + `
-    ` + args)
+
+  async runPython() {
+    return await this.RunCodePython(); // Ensure it returns the result
   }
+
+  addCode(args) {
+    this.pythonCode += `\n${args.CODE}`; // Concatenate new code line
+  }
+
   resetCode() {
     this.pythonCode = `
 message = ("Hello World!")
 message
-    `
+    `;
   }
+
   getCode() {
-    return this.pythonCode
+    return this.pythonCode;
   }
-    async RunCodePython() {
+
+  async RunCodePython() {
     // Ensure Pyodide is loaded
     if (!this.pyodideReady) {
       if (!this.pyodideLoading) {
@@ -161,7 +159,7 @@ message
       }
     }
 
-    // Run the pre-defined Python code and get the result
+    // Run the Python code and get the result
     if (window.pyodide) {
       let result = await window.pyodide.runPythonAsync(this.pythonCode);
       return result;
