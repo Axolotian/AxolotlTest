@@ -70,7 +70,7 @@ class HyperTest {
       await loadPyodide();
     }
   }
-  GenerateRandomPython() {const pythonCode = `
+  async GenerateRandomPython() {const pythonCode = `
 import random
 test = random.randint(1, 10)
 test
