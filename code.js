@@ -2,6 +2,12 @@ class HyperTest {
   constructor() {
     this.pyodideReady = false; // Flag to check if Pyodide is initialized
     this.pyodideLoading = false;
+    this.pythonCode = `
+import random
+test = random.randint(1, 10)
+test
+    `; // Predefine the Python code
+    this.preloadPyodide(); // Preload Pyodide when the extension is initialized
   }
 
   getInfo() {
@@ -9,21 +15,6 @@ class HyperTest {
       id: 'hypertest',
       name: 'please help me',
       blocks: [
-        {
-          opcode: 'convert',
-          blockType: Scratch.BlockType.REPORTER,
-          text: 'convert [TEXT] to [FORMAT]',
-          arguments: {
-            TEXT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: 'Apple'
-            },
-            FORMAT: {
-              type: Scratch.ArgumentType.STRING,
-              menu: 'FORMAT_MENU'
-            }
-          }
-        },
         {
           opcode: 'PythonInit',
           blockType: Scratch.BlockType.COMMAND,
@@ -38,32 +29,19 @@ class HyperTest {
           opcode: 'checkPython',
           blockType: Scratch.BlockType.BOOLEAN,
           text: 'Python Initialised?',
+        },
+        {
+          opcode:  'checkPythonLoading',
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: 'Python Loading?'
         }
       ],
-      menus: {
-        FORMAT_MENU: {
-          acceptReporters: true,
-          items: [
-            {
-              text: 'UPPERCASE',
-              value: 'up'
-            },
-            {
-              text: 'lowercase',
-              value: 'low'
-            }
-          ]
-        }
-      }
     };
   }
 
-  async PythonInit() {
-    if (this.pyodideReady) {
-      return; // Pyodide is already loaded, no need to reload
-    }
-
+  async preloadPyodide() {
     if (typeof pyodide === 'undefined') {
+      this.pyodide = true;
       const pyodideScript = document.createElement('script');
       pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js';
       document.head.appendChild(pyodideScript);
@@ -75,28 +53,37 @@ class HyperTest {
 
       // Wait for Pyodide to fully load
       await loadPyodide();
+      this.pyodideLoading = false;
       this.pyodideReady = true; // Mark Pyodide as loaded
     }
+  }
+
+  async PythonInit() {
+    // This function is now almost redundant since Pyodide is preloaded at the start
+    if (this.pyodideReady) {
+      return;
+    }
+    await this.preloadPyodide(); // Ensure Pyodide is ready
   }
 
   async GenerateRandomPython() {
     // Ensure Pyodide is loaded
     if (!this.pyodideReady) {
+      if (!this.pyodideLoading){
       await this.PythonInit();
+      }
     }
 
-    const pythonCode = `
-import random
-test = random.randint(1, 10)
-test
-    `;
-    
-    // Run the Python code and get the result
-    let result = await pyodide.runPythonAsync(pythonCode);
+    // Run the pre-defined Python code and get the result
+    let result = await pyodide.runPythonAsync(this.pythonCode);
     return result;
   }
+
   checkPython() {
-    return this.pyodideReady
+    return this.pyodideReady;
+  }
+  checkPythonLoading() {
+    return this.pyodideLoading;
   }
 }
 
