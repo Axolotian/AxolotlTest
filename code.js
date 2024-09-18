@@ -33,6 +33,11 @@ class HyperTest {
           opcode: 'GenerateRandomPython',
           blockType: Scratch.BlockType.REPORTER,
           text: 'Generate a random number with python, this is a test',
+        },
+        {
+          opcode: 'checkPython',
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: 'Python Initialised?',
         }
       ],
       menus: {
@@ -59,7 +64,6 @@ class HyperTest {
     }
 
     if (typeof pyodide === 'undefined') {
-      this.pyodideLoading = true;
       const pyodideScript = document.createElement('script');
       pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js';
       document.head.appendChild(pyodideScript);
@@ -72,15 +76,11 @@ class HyperTest {
       // Wait for Pyodide to fully load
       await loadPyodide();
       this.pyodideReady = true; // Mark Pyodide as loaded
-      this.pyodideLoading = false;
     }
   }
 
   async GenerateRandomPython() {
     // Ensure Pyodide is loaded
-    if (!this.pyodideLoading) {
-      return "Please Hold lol"
-    }
     if (!this.pyodideReady) {
       await this.PythonInit();
     }
@@ -94,6 +94,9 @@ test
     // Run the Python code and get the result
     let result = await pyodide.runPythonAsync(pythonCode);
     return result;
+  }
+  checkPython() {
+    return this.pyodideReady
   }
 }
 
