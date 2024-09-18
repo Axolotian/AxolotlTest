@@ -19,6 +19,7 @@ message
           opcode: 'PythonInit',
           blockType: Scratch.BlockType.COMMAND,
           text: 'Initialise Python',
+          hideFromPalette: true
         },
         {
           opcode: 'runCode',
