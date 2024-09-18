@@ -26,7 +26,7 @@ class HyperTest {
         },
         {
           opcode: 'GenerateRandomPython',
-          blockType: Scratch.BlockType.COMMAND,
+          blockType: Scratch.BlockType.REPORTER,
           text: 'Generate a random number with python, this is a test',
         },
         {
@@ -79,8 +79,8 @@ test
     // Run the Python code and get the result
     let result = await pyodide.runPythonAsync(pythonCode);
     return result;
-  }
-}
+                               }
+
 
   async runPythonCode() {
     // Load Pyodide (this part will run the Python code inside the browser)
