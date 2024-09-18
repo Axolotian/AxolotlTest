@@ -41,7 +41,7 @@ test
 
   async preloadPyodide() {
     if (typeof pyodide === 'undefined') {
-      this.pyodide = true;
+      this.pyodideLoading = true;
       const pyodideScript = document.createElement('script');
       pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js';
       document.head.appendChild(pyodideScript);
