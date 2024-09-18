@@ -4,7 +4,8 @@ class TurboPython {
     this.pyodideLoading = false;
     this.pyodideLoadingStatus = "0/5";
     this.pythonCode = `
-print("Hello World!")
+message = ("Hello World!")
+message
     `; // Predefine the Python code
     this.preloadPyodide(); // Preload Pyodide when the extension is initialized
   }
