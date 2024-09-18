@@ -1,4 +1,9 @@
 class HyperTest {
+  constructor() {
+    this.pyodideReady = false; // Flag to check if Pyodide is initialized
+    this.pyodideLoading = false;
+  }
+
   getInfo() {
     return {
       id: 'hypertest',
@@ -18,7 +23,7 @@ class HyperTest {
               menu: 'FORMAT_MENU'
             }
           }
-        },        
+        },
         {
           opcode: 'PythonInit',
           blockType: Scratch.BlockType.COMMAND,
@@ -48,24 +53,38 @@ class HyperTest {
     };
   }
 
-  convert(args) {
-    if (args.FORMAT === 'up') {
-      return args.TEXT.toString().toUpperCase();
-    } else {
-      return args.TEXT.toString().toLowerCase();
-    }
-  }
   async PythonInit() {
-    // Load Pyodide (this part will run the Python code inside the browser)
+    if (this.pyodideReady or this.pyodideLoading) {
+      return; // Pyodide is already loaded, no need to reload
+    }
+
     if (typeof pyodide === 'undefined') {
+      this.pyodideLoading = true;
       const pyodideScript = document.createElement('script');
       pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js';
       document.head.appendChild(pyodideScript);
-      await new Promise((resolve) => (pyodideScript.onload = resolve));
+
+      await new Promise((resolve, reject) => {
+        pyodideScript.onload = resolve;
+        pyodideScript.onerror = reject;
+      });
+
+      // Wait for Pyodide to fully load
       await loadPyodide();
+      this.pyodideReady = true; // Mark Pyodide as loaded
+      this.pyodideLoading = false;
     }
   }
-  GenerateRandomPython() {
+
+  async GenerateRandomPython() {
+    // Ensure Pyodide is loaded
+    if (!this.pyodideLoading) {
+      return "Please Hold lol"
+    }
+    if (!this.pyodideReady) {
+      await this.PythonInit();
+    }
+
     const pythonCode = `
 import random
 test = random.randint(1, 10)
@@ -75,8 +94,7 @@ test
     // Run the Python code and get the result
     let result = await pyodide.runPythonAsync(pythonCode);
     return result;
-                               }
+  }
 }
-
 
 Scratch.extensions.register(new HyperTest());
