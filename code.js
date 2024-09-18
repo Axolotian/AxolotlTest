@@ -54,7 +54,7 @@ class HyperTest {
   }
 
   async PythonInit() {
-    if (this.pyodideReady or this.pyodideLoading) {
+    if (this.pyodideReady) {
       return; // Pyodide is already loaded, no need to reload
     }
 
