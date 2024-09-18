@@ -1,4 +1,4 @@
-class HyperTest {
+class TurboPython {
   constructor() {
     this.pyodideReady = false; // Flag to check if Pyodide is initialized
     this.pyodideLoading = false;
@@ -13,8 +13,8 @@ test
 
   getInfo() {
     return {
-      id: 'hypertest',
-      name: 'please help me',
+      id: turbopython',
+      name: 'TurboPython',
       blocks: [
         {
           opcode: 'PythonInit',
@@ -38,7 +38,7 @@ test
         },
         {
           opcode: 'pythonLoadingStep',
-          blockType: Scratch.BlockType.BOOLEAN,
+          blockType: Scratch.BlockType.REPORTER,
           text: 'Python Loading Status'
         }
       ],
@@ -102,4 +102,4 @@ test
   }
 }
 
-Scratch.extensions.register(new HyperTest());
+Scratch.extensions.register(new TurboPython());
