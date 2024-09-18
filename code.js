@@ -18,11 +18,16 @@ class HyperTest {
               menu: 'FORMAT_MENU'
             }
           }
+        },        
+        {
+          opcode: 'PythonInit',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'Initialise Python',
         },
         {
           opcode: 'runPythonCode',
           blockType: Scratch.BlockType.REPORTER,
-          text: 'run python code',
+          text: 'run python code(dont use)',
         }
       ],
       menus: {
@@ -48,6 +53,16 @@ class HyperTest {
       return args.TEXT.toString().toUpperCase();
     } else {
       return args.TEXT.toString().toLowerCase();
+    }
+  }
+  async runPythonCode() {
+    // Load Pyodide (this part will run the Python code inside the browser)
+    if (typeof pyodide === 'undefined') {
+      const pyodideScript = document.createElement('script');
+      pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js';
+      document.head.appendChild(pyodideScript);
+      await new Promise((resolve) => (pyodideScript.onload = resolve));
+      await loadPyodide();
     }
   }
 
