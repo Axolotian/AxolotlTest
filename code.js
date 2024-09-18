@@ -40,13 +40,22 @@ test
           opcode: 'pythonLoadingStep',
           blockType: Scratch.BlockType.REPORTER,
           text: 'Python Loading Status',
+        },
+        {opcode: 'runPython',
+        blockType: Scratch.BlockType.COMMAND,
+        text: 'Run python code [SCRIPT]',
+        arguments:{
+            SCRIPT: {
+              type: Scratch.ArgumentType.STRING
+            }
+        }
         }
       ],
     };
   }
 
   async preloadPyodide() {
-    if (typeof pyodide === 'undefined') {
+    if (typeof window.pyodide === 'undefined') {
       this.pyodideLoading = true;
       this.pyodideLoadingStatus = "0/5";
       const pyodideScript = document.createElement('script');
@@ -68,7 +77,7 @@ test
 
       // Wait for Pyodide to fully load
       try {
-        await loadPyodide(); // Ensure this function is available in your environment
+        window.pyodide = await loadPyodide(); // Ensure Pyodide is loaded
         this.pyodideLoadingStatus = "4/5";
         this.pyodideReady = true;
         this.pyodideLoading = false;
@@ -97,8 +106,12 @@ test
     }
 
     // Run the pre-defined Python code and get the result
-    let result = await pyodide.runPythonAsync(this.pythonCode);
-    return result;
+    if (window.pyodide) {
+      let result = await window.pyodide.runPythonAsync(this.pythonCode);
+      return result;
+    } else {
+      throw new Error("Pyodide is not available");
+    }
   }
 
   checkPython() {
@@ -112,6 +125,26 @@ test
   pythonLoadingStep() {
     return this.pyodideLoadingStatus;
   }
+  runPython(args) {
+    this.pythonCode = (args)
+    this.RunCodePython()
+    
 }
+    async RunCodePython() {
+    // Ensure Pyodide is loaded
+    if (!this.pyodideReady) {
+      if (!this.pyodideLoading) {
+        await this.PythonInit();
+      }
+    }
+
+    // Run the pre-defined Python code and get the result
+    if (window.pyodide) {
+      let result = await window.pyodide.runPythonAsync(this.pythonCode);
+      return result;
+    } else {
+      throw new Error("Pyodide is not available");
+    }
+  }
 
 Scratch.extensions.register(new TurboPython());
