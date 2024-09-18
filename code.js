@@ -2,7 +2,7 @@ class TurboPython {
   constructor() {
     this.pyodideReady = false; // Flag to check if Pyodide is initialized
     this.pyodideLoading = false;
-    this.pyodideLoadingStatus = "0/5"
+    this.pyodideLoadingStatus = "0/5";
     this.pythonCode = `
 import random
 test = random.randint(1, 10)
@@ -13,7 +13,7 @@ test
 
   getInfo() {
     return {
-      id: turbopython',
+      id: 'turbopython',
       name: 'TurboPython',
       blocks: [
         {
@@ -24,7 +24,7 @@ test
         {
           opcode: 'GenerateRandomPython',
           blockType: Scratch.BlockType.REPORTER,
-          text: 'Generate a random number with python, this is a test',
+          text: 'Generate a random number with Python, this is a test',
         },
         {
           opcode: 'checkPython',
@@ -32,14 +32,14 @@ test
           text: 'Python Initialised?',
         },
         {
-          opcode:  'checkPythonLoading',
+          opcode: 'checkPythonLoading',
           blockType: Scratch.BlockType.BOOLEAN,
-          text: 'Python Loading?'
+          text: 'Python Loading?',
         },
         {
           opcode: 'pythonLoadingStep',
           blockType: Scratch.BlockType.REPORTER,
-          text: 'Python Loading Status'
+          text: 'Python Loading Status',
         }
       ],
     };
@@ -81,8 +81,8 @@ test
   async GenerateRandomPython() {
     // Ensure Pyodide is loaded
     if (!this.pyodideReady) {
-      if (!this.pyodideLoading){
-      await this.PythonInit();
+      if (!this.pyodideLoading) {
+        await this.PythonInit();
       }
     }
 
@@ -94,11 +94,13 @@ test
   checkPython() {
     return this.pyodideReady;
   }
+
   checkPythonLoading() {
     return this.pyodideLoading;
   }
+
   pythonLoadingStep() {
-    return this.pyodideLoadingStatus
+    return this.pyodideLoadingStatus;
   }
 }
 
