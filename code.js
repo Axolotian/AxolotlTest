@@ -51,22 +51,32 @@ test
       this.pyodideLoadingStatus = "0/5";
       const pyodideScript = document.createElement('script');
       this.pyodideLoadingStatus = "1/5";
-      pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js';
-      this.pyodideLoadingStatus = "2/5";
+      pyodideScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.21.2/full/pyodide.js'; // Updated version
       document.head.appendChild(pyodideScript);
-      this.pyodideLoadingStatus = "3/5";
+      this.pyodideLoadingStatus = "2/5";
 
       await new Promise((resolve, reject) => {
-        pyodideScript.onload = resolve;
-        pyodideScript.onerror = reject;
+        pyodideScript.onload = () => {
+          this.pyodideLoadingStatus = "3/5";
+          resolve();
+        };
+        pyodideScript.onerror = () => {
+          this.pyodideLoadingStatus = "Error loading script";
+          reject();
+        };
       });
-      this.pyodideLoadingStatus = "4/5";
 
       // Wait for Pyodide to fully load
-      await loadPyodide();
-      this.pyodideLoadingStatus = "5/5";
-      this.pyodideLoading = false;
-      this.pyodideReady = true; // Mark Pyodide as loaded
+      try {
+        await loadPyodide(); // Ensure this function is available in your environment
+        this.pyodideLoadingStatus = "4/5";
+        this.pyodideReady = true;
+        this.pyodideLoading = false;
+        this.pyodideLoadingStatus = "5/5";
+      } catch (error) {
+        this.pyodideLoadingStatus = "Error loading Pyodide";
+        console.error("Error loading Pyodide:", error);
+      }
     }
   }
 
